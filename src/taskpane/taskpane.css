@@ -86,3 +86,14 @@ ul {
     display: block;
     text-align: right;
 }
+
+.ms-stock-prices__details h2 {
+    margin: 20px 0 0;
+    text-align: center;
+}
+
+.ms-stock-prices__details h3 {
+    margin: 0;
+    font-size: .8rem;
+    color: #666;
+}

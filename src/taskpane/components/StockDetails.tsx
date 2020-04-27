@@ -1,6 +1,7 @@
 import * as React from "react";
-
 import { Button } from "office-ui-fabric-react";
+
+import { formatNumber } from "../utils";
 
 export interface StockDetailsData {
     changesPercentage: string;
@@ -41,10 +42,11 @@ class StockDetails extends React.Component<StockDetailsProps> {
 
         return (
             <main className="ms-stock-prices__details">
-                <Button onClick={onBack.bind(this)}>&lt;- Back to List</Button>
+                <Button onClick={onBack.bind(this)}>&larr; Back to List</Button>
                 <img src={ image } alt={`${companyName} Logo`} />
-                <h2>{ companyName } ({ symbol })</h2>
-                <p className="detail-price">${ price }  <span className={getPercentageClass(changesPercentage)}>{ changesPercentage }</span></p>
+                <h2>{ companyName }</h2>
+                <h3>({ symbol })</h3>
+                <p className="detail-price">${ formatNumber(price) }  <span className={getPercentageClass(changesPercentage)}>{ changesPercentage }</span></p>
                 <p>{ description }</p>
             </main>
         );

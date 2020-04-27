@@ -5,7 +5,8 @@ import Loading from "./Loading";
 import StockPricesList, { StockPriceItem } from "./StockPricesList";
 import StockDetails, { StockDetailsData } from "./StockDetails";
 
-import { fetchStockPrices } from "../api";
+import { fetchStockPrices, fetchStockProfile } from "../api";
+import { sortByPrice } from "../utils";
 
 const DEFAULT_SYMBOLS = [
   'AAPL',
@@ -51,21 +52,39 @@ export default class App extends React.Component<AppProps, AppState> {
     const json = await response.json();
 
     this.setState({
-      prices: json['companiesPriceList'],
+      prices: json['companiesPriceList'].sort(sortByPrice),
       isLoading: false
     });
   }
 
-  onSelectSymbol(symbol: string) {
+  async onSelectSymbol(symbol: string) {
+    this.setState({
+      isLoading: true
+    });
+
+    const response = await fetchStockProfile(symbol);
+    const json = await response.json();
+
+    const {
+      profile: {
+        changesPercentage,
+        companyName,
+        description,
+        image,
+        price
+      }
+    } = json;
+
     this.setState({
       selectedSymbol: symbol,
+      isLoading: false,
       selectedSymbolData: {
-        changesPercentage: "(+2.89%)",
-        companyName: "Apple Inc.",
-        description: "Apple Inc is designs, manufactures and markets mobile communication and media devices and personal computers, and sells a variety of related software, services, accessories, networking solutions and third-party digital content and applications.",
-        image: "https://financialmodelingprep.com/images-New-jpg/AAPL.jpg",
-        price: 282.97,
-        symbol: "AAPL"
+        changesPercentage,
+        companyName,
+        description,
+        image,
+        price,
+        symbol
       }
     });
   }
