@@ -61,17 +61,19 @@ export default class App extends React.Component<AppProps, AppState> {
       price
     } = profile;
 
+    const selectedSymbolData = {
+      changesPercentage,
+      companyName,
+      description,
+      image,
+      price,
+      symbol
+    };
+
     this.setState({
-      selectedSymbol: symbol,
       isLoading: false,
-      selectedSymbolData: {
-        changesPercentage,
-        companyName,
-        description,
-        image,
-        price,
-        symbol
-      }
+      selectedSymbol: symbol,
+      selectedSymbolData
     });
   }
 
