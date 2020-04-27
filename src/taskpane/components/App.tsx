@@ -9,18 +9,8 @@ import { fetchStockPrices, fetchStockProfile } from "../api";
 import { sortByPrice } from "../utils";
 
 const DEFAULT_SYMBOLS = [
-  'AAPL',
-  'AMD',
-  'AMZN',
-  'FB',
-  'FNDR',
-  'GOOG',
-  'NVDA',
-  'PIH',
-  'TWTR',
-  'UBER',
-  'WORK',
-  'ZNGA',
+  'AAPL', 'AMD', 'AMZN', 'FB', 'FNDR', 'GOOG',
+  'NVDA', 'PIH', 'TWTR', 'UBER', 'WORK', 'ZNGA'
 ];
 
 export interface AppProps {
@@ -48,11 +38,10 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   async componentDidMount() {
-    const response = await fetchStockPrices(DEFAULT_SYMBOLS);
-    const json = await response.json();
+    const prices = await fetchStockPrices(DEFAULT_SYMBOLS);
 
     this.setState({
-      prices: json['companiesPriceList'].sort(sortByPrice),
+      prices: prices.sort(sortByPrice),
       isLoading: false
     });
   }
@@ -62,18 +51,15 @@ export default class App extends React.Component<AppProps, AppState> {
       isLoading: true
     });
 
-    const response = await fetchStockProfile(symbol);
-    const json = await response.json();
+    const profile = await fetchStockProfile(symbol);
 
     const {
-      profile: {
-        changesPercentage,
-        companyName,
-        description,
-        image,
-        price
-      }
-    } = json;
+      changesPercentage,
+      companyName,
+      description,
+      image,
+      price
+    } = profile;
 
     this.setState({
       selectedSymbol: symbol,
@@ -97,7 +83,8 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   render() {
-    const { isOfficeInitialized } = this.props;
+    const { isOfficeInitialized, title } = this.props;
+    const { isLoading, selectedSymbolData, selectedSymbol, prices } = this.state;
 
     if (!isOfficeInitialized) {
       return (
@@ -107,13 +94,13 @@ export default class App extends React.Component<AppProps, AppState> {
 
     return (
       <div className="ms-welcome">
-        <Header title={this.props.title} />
+        <Header title={title} />
 
-        { this.state.isLoading && <Loading /> }
+        { isLoading && <Loading /> }
 
-        {this.state.selectedSymbol ?
-          <StockDetails onBack={this.onBack} { ...this.state.selectedSymbolData } /> :
-          <StockPricesList items={this.state.prices} onSelectSymbol={this.onSelectSymbol} />
+        { selectedSymbol ?
+          <StockDetails onBack={this.onBack} { ...selectedSymbolData } /> :
+          <StockPricesList items={prices} onSelectSymbol={this.onSelectSymbol} />
         }
       </div>
     );

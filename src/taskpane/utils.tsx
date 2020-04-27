@@ -6,4 +6,16 @@ const sortByPrice = (a: Object, b: Object) => (
 	b['price'] - a['price']
 );
 
-export { formatNumber, sortByPrice };
+const getPercentageClass = (percentage: string) => {
+    let percentageClass = 'percentage-neutral';
+
+    if (percentage.includes("+")) {
+        percentageClass = "percentage-positive";
+    } else if (percentage.includes("-")) {
+        percentageClass = "percentage-negative";
+    }
+
+    return percentageClass;
+}
+
+export { formatNumber, sortByPrice, getPercentageClass };

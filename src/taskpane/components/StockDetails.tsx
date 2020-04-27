@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Button } from "office-ui-fabric-react";
+import { DefaultButton } from "office-ui-fabric-react";
 
-import { formatNumber } from "../utils";
+import { formatNumber, getPercentageClass } from "../utils";
 
 export interface StockDetailsData {
     changesPercentage: string;
@@ -16,18 +16,6 @@ interface StockDetailsProps extends StockDetailsData {
     onBack: Function
 }
 
-const getPercentageClass = (percentage: string) => {
-    let percentageClass = 'percentage-neutral';
-
-    if (percentage.includes("+")) {
-        percentageClass = "percentage-positive";
-    } else if (percentage.includes("-")) {
-        percentageClass = "percentage-negative";
-    }
-
-    return percentageClass;
-}
-
 class StockDetails extends React.Component<StockDetailsProps> {
     render () {
         const {
@@ -40,13 +28,21 @@ class StockDetails extends React.Component<StockDetailsProps> {
             onBack
         } = this.props;
 
+        const percentageClass = getPercentageClass(changesPercentage);
+
         return (
             <main className="ms-stock-prices__details">
-                <Button onClick={onBack.bind(this)}>&larr; Back to List</Button>
+                <DefaultButton onClick={onBack.bind(this)}>
+                    &larr; Back to List
+                </DefaultButton>
+
                 <img src={ image } alt={`${companyName} Logo`} />
+
                 <h2>{ companyName }</h2>
                 <h3>({ symbol })</h3>
-                <p className="detail-price">${ formatNumber(price) }  <span className={getPercentageClass(changesPercentage)}>{ changesPercentage }</span></p>
+
+                <p className="detail-price">${ formatNumber(price) } <span className={percentageClass}>{ changesPercentage }</span></p>
+
                 <p>{ description }</p>
             </main>
         );
