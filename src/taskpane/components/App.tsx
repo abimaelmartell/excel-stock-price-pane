@@ -1,9 +1,8 @@
 import * as React from "react";
-import { Button, ButtonType } from "office-ui-fabric-react";
+
 import Header from "./Header";
-import HeroList, { HeroListItem } from "./HeroList";
-import Progress from "./Progress";
-/* global Button, console, Excel, Header, HeroList, HeroListItem, Progress */
+import StockPricesList, { StockPriceItem } from "./StockPricesList";
+import StockDetails, { StockDetailsData } from "./StockDetails";
 
 export interface AppProps {
   title: string;
@@ -11,83 +10,77 @@ export interface AppProps {
 }
 
 export interface AppState {
-  listItems: HeroListItem[];
+  prices: StockPriceItem[];
+  selectedSymbol?: string;
+  selectedSymbolData?: StockDetailsData;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      listItems: []
+      prices: [
+        {
+          symbol: "APPL",
+          price: 20.20
+        },
+        {
+          symbol: "AMZ",
+          price: 20.20
+        },
+        {
+          symbol: "GOOG",
+          price: 20.20
+        },
+        {
+          symbol: "MSFT",
+          price: 20.20
+        },
+      ]
     };
+
+    this.onSelectSymbol = this.onSelectSymbol.bind(this);
+    this.onBack = this.onBack.bind(this);
   }
 
-  componentDidMount() {
+  onSelectSymbol(symbol: string) {
     this.setState({
-      listItems: [
-        {
-          icon: "Ribbon",
-          primaryText: "Achieve more with Office integration"
-        },
-        {
-          icon: "Unlock",
-          primaryText: "Unlock features and functionality"
-        },
-        {
-          icon: "Design",
-          primaryText: "Create and visualize like a pro"
-        }
-      ]
+      selectedSymbol: symbol,
+      selectedSymbolData: {
+        changesPercentage: "(+2.89%)",
+        companyName: "Apple Inc.",
+        description: "Apple Inc is designs, manufactures and markets mobile communication and media devices and personal computers, and sells a variety of related software, services, accessories, networking solutions and third-party digital content and applications.",
+        image: "https://financialmodelingprep.com/images-New-jpg/AAPL.jpg",
+        price: 282.97,
+        symbol: "AAPL"
+      }
     });
   }
 
-  click = async () => {
-    try {
-      await Excel.run(async context => {
-        /**
-         * Insert your Excel code here
-         */
-        const range = context.workbook.getSelectedRange();
-
-        // Read the range address
-        range.load("address");
-
-        // Update the fill color
-        range.format.fill.color = "yellow";
-
-        await context.sync();
-        console.log(`The range address was ${range.address}.`);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  onBack() {
+    this.setState({
+      selectedSymbol: null,
+      selectedSymbolData: null
+    })
+  }
 
   render() {
-    const { title, isOfficeInitialized } = this.props;
+    const { isOfficeInitialized } = this.props;
 
     if (!isOfficeInitialized) {
       return (
-        <Progress title={title} logo="assets/logo-filled.png" message="Please sideload your addin to see app body." />
+        <p>Please sideload your addin to see app body.</p>
       );
     }
 
     return (
       <div className="ms-welcome">
-        <Header logo="assets/logo-filled.png" title={this.props.title} message="Welcome" />
-        <HeroList message="Discover what Office Add-ins can do for you today!" items={this.state.listItems}>
-          <p className="ms-font-l">
-            Modify the source files, then click <b>Run</b>.
-          </p>
-          <Button
-            className="ms-welcome__action"
-            buttonType={ButtonType.hero}
-            iconProps={{ iconName: "ChevronRight" }}
-            onClick={this.click}
-          >
-            Run
-          </Button>
-        </HeroList>
+        <Header title={this.props.title} />
+
+        {this.state.selectedSymbol ?
+          <StockDetails onBack={this.onBack} { ...this.state.selectedSymbolData } /> :
+          <StockPricesList items={this.state.prices} onSelectSymbol={this.onSelectSymbol} />
+        }
       </div>
     );
   }
