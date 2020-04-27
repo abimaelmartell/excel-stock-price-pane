@@ -24,6 +24,10 @@ ul {
     align-items: center;
 }
 
+.spinner {
+    margin-top: 50px;
+}
+
 .ms-stock-prices__main,
 .ms-stock-prices__details {
     display: -webkit-flex;
@@ -59,6 +63,7 @@ ul {
 
 .ms-stock-prices__main .ms-List .ms-ListItem Button {
     text-align: left;
+    width: 100%;
 }
  
 .percentage-neutral {
@@ -75,4 +80,9 @@ ul {
 
 .detail-price {
     font-weight: bold;
+}
+
+.stock-list-price {
+    display: block;
+    text-align: right;
 }

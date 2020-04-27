@@ -1,8 +1,26 @@
 import * as React from "react";
 
 import Header from "./Header";
+import Loading from "./Loading";
 import StockPricesList, { StockPriceItem } from "./StockPricesList";
 import StockDetails, { StockDetailsData } from "./StockDetails";
+
+import { fetchStockPrices } from "../api";
+
+const DEFAULT_SYMBOLS = [
+  'AAPL',
+  'AMD',
+  'AMZN',
+  'FB',
+  'FNDR',
+  'GOOG',
+  'NVDA',
+  'PIH',
+  'TWTR',
+  'UBER',
+  'WORK',
+  'ZNGA',
+];
 
 export interface AppProps {
   title: string;
@@ -11,6 +29,7 @@ export interface AppProps {
 
 export interface AppState {
   prices: StockPriceItem[];
+  isLoading: boolean;
   selectedSymbol?: string;
   selectedSymbolData?: StockDetailsData;
 }
@@ -19,28 +38,22 @@ export default class App extends React.Component<AppProps, AppState> {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      prices: [
-        {
-          symbol: "APPL",
-          price: 20.20
-        },
-        {
-          symbol: "AMZ",
-          price: 20.20
-        },
-        {
-          symbol: "GOOG",
-          price: 20.20
-        },
-        {
-          symbol: "MSFT",
-          price: 20.20
-        },
-      ]
+      prices: [],
+      isLoading: true
     };
 
     this.onSelectSymbol = this.onSelectSymbol.bind(this);
     this.onBack = this.onBack.bind(this);
+  }
+
+  async componentDidMount() {
+    const response = await fetchStockPrices(DEFAULT_SYMBOLS);
+    const json = await response.json();
+
+    this.setState({
+      prices: json['companiesPriceList'],
+      isLoading: false
+    });
   }
 
   onSelectSymbol(symbol: string) {
@@ -76,6 +89,8 @@ export default class App extends React.Component<AppProps, AppState> {
     return (
       <div className="ms-welcome">
         <Header title={this.props.title} />
+
+        { this.state.isLoading && <Loading /> }
 
         {this.state.selectedSymbol ?
           <StockDetails onBack={this.onBack} { ...this.state.selectedSymbolData } /> :

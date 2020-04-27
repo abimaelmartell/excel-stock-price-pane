@@ -1,6 +1,7 @@
 import * as React from "react";
-
 import { Button } from "office-ui-fabric-react";
+
+import { formatNumber } from "../utils";
 
 export interface StockPriceItem {
   symbol: string;
@@ -29,8 +30,8 @@ class StockPrice extends React.Component<StockPriceItemProps> {
         return (
             <li className="ms-ListItem">
                 <Button onClick={this.onClick.bind(this)}>
-                    <span className="ms-font-m ms-fontColor-neutralPrimary stock-list-symbol">{symbol}</span>
-                    <span className="ms-font-m ms-fontColor-neutralPrimary">${price}</span>
+                    <span className="stock-list-symbol">{symbol}</span>
+                    <span className="stock-list-price">${formatNumber(price)}</span>
                 </Button>
             </li>
         );
